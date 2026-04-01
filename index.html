@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quarter Tracker</title>
+<style>
+  body { margin: 0; padding: 16px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; color: #1a1a1a; }
+  .title { font-size: 13px; color: #888; margin: 0 0 4px; }
+  .big { font-size: 28px; font-weight: 500; margin: 0; }
+  .card { flex: 1; background: #f7f7f5; border-radius: 8px; padding: 12px 16px; }
+  .row { display: flex; gap: 12px; margin-bottom: 20px; }
+  .bar-wrap { background: #efefed; border-radius: 99px; height: 10px; overflow: hidden; margin: 6px 0 4px; }
+  .bar { height: 100%; border-radius: 99px; }
+  .labels { display: flex; justify-content: space-between; font-size: 12px; color: #888; }
+  .status { background: #f7f7f5; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #555; line-height: 1.5; }
+  hr { border: none; border-top: 1px solid #efefed; margin: 16px 0; }
+</style>
+</head>
+<body>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <div>
+    <p style="font-size:11px;color:#888;margin:0 0 2px;text-transform:uppercase;letter-spacing:.06em;">Quarter tracker</p>
+    <p id="q-label" style="font-size:16px;font-weight:500;margin:0;"></p>
+  </div>
+  <div style="text-align:right;">
+    <p style="font-size:11px;color:#888;margin:0 0 2px;">Today</p>
+    <p id="today" style="font-size:13px;font-weight:500;margin:0;"></p>
+  </div>
+</div>
+<div class="row">
+  <div class="card"><p class="title">Days elapsed</p><p class="big" id="elapsed"></p></div>
+  <div class="card"><p class="title">Days remaining</p><p class="big" id="remaining"></p></div>
+  <div class="card"><p class="title">% of quarter gone</p><p class="big" id="pct"></p></div>
+</div>
+<p class="title" style="margin-bottom:4px;">Quarter progress</p>
+<div class="bar-wrap"><div class="bar" id="bar" style="background:#378ADD;"></div></div>
+<div class="labels"><span id="q-start"></span><span id="q-end"></span></div>
+<hr>
+<div class="status" id="status"></div>
+<script>
+var now=new Date(),y=now.getFullYear(),m=now.getMonth(),q=Math.floor(m/3)+1;
+var qs=new Date(y,(q-1)*3,1),qe=new Date(y,q*3,0);
+var total=Math.round((qe-qs)/864e5)+1,elapsed=Math.round((now-qs)/864e5)+1,left=total-elapsed;
+var pct=Math.round(elapsed/total*100);
+var fmt=function(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});};
+document.getElementById('q-label').textContent='Q'+q+' '+y;
+document.getElementById('today').textContent=now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+document.getElementById('elapsed').textContent=elapsed;
+document.getElementById('remaining').textContent=left;
+document.getElementById('pct').textContent=pct+'%';
+document.getElementById('bar').style.width=pct+'%';
+document.getElementById('q-start').textContent=fmt(qs);
+document.getElementById('q-end').textContent=fmt(qe);
+document.getElementById('status').textContent=pct+'% of Q'+q+' has passed. '+left+' days remain until '+fmt(qe)+'. '+(pct>=90?'Final stretch!':pct>=75?'Last quarter of the quarter remaining.':pct>=50?'Second half underway.':'Plenty of runway left.');
+</script>
+</body>
+</html>
